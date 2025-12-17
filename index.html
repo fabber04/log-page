@@ -374,7 +374,25 @@
       .card {
         grid-template-columns: 1fr;
         gap: 16px;
-        padding: 24px;
+        padding: 20px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .side {
+        transform: none;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      .logo {
+        width: 36px;
+        height: 36px;
+      }
+      h1 {
+        margin: 10px 0 2px;
+        font-size: 1.4rem;
+      }
+      .subtitle {
+        font-size: 0.9rem;
       }
       .actions {
         flex-direction: column;
@@ -383,6 +401,32 @@
       button {
         width: 100%;
         text-align: center;
+        margin-top: 4px;
+      }
+      input {
+        padding: 12px 11px;
+      }
+      .hint {
+        margin-top: 20px;
+      }
+      .footer {
+        width: 100%;
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      .footer-links {
+        width: 100%;
+        gap: 14px;
+        justify-content: flex-start;
+      }
+      .lang-selector {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .lang-menu {
+        min-width: 100%;
+        left: 0;
       }
     }
   </style>
