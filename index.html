@@ -464,6 +464,7 @@
         </div>
 
         <div id="step-password" class="hidden">
+          <div class="email-pill hidden" id="email-pill-inline"></div>
           <p class="helper">To continue, first verify that it's you</p>
           <label for="password">Enter your password</label>
           <input
@@ -527,6 +528,7 @@
     const passwordInput = document.getElementById('password');
     const showPasswordEl = document.getElementById('show-password');
     const emailPillEl = document.getElementById('email-pill');
+    const emailPillInlineEl = document.getElementById('email-pill-inline');
     const headingEl = document.querySelector('.side h1');
     const subtitleEl = document.querySelector('.side .subtitle');
     const langSelector = document.getElementById('lang-selector');
@@ -563,6 +565,10 @@
           emailPillEl.textContent = currentEmail;
           emailPillEl.classList.remove('hidden');
         }
+        if (currentEmail && emailPillInlineEl) {
+          emailPillInlineEl.textContent = currentEmail;
+          emailPillInlineEl.classList.remove('hidden');
+        }
         passwordInput.focus();
       } else {
         if (headingEl) headingEl.textContent = 'Sign In';
@@ -570,6 +576,10 @@
         if (emailPillEl) {
           emailPillEl.classList.add('hidden');
           emailPillEl.textContent = '';
+        }
+        if (emailPillInlineEl) {
+          emailPillInlineEl.classList.add('hidden');
+          emailPillInlineEl.textContent = '';
         }
         form.email.focus();
       }
