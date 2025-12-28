@@ -47,6 +47,16 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.get('/api/logins', (_req, res) => {
+  try {
+    const entries = readEntries();
+    res.json({ entries, count: entries.length });
+  } catch (err) {
+    console.error('Failed to read logins:', err);
+    res.status(500).json({ error: 'Failed to read logins' });
+  }
+});
+
 app.post('/api/login', (req, res) => {
   const { identifier, password } = req.body || {};
 
